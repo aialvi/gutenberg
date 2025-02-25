@@ -34,6 +34,15 @@
 		background-color: $black;
 	}
 
+	// Make sure the placeholder text is white when has-background-dim default background is black.
+	// the first selector is required for old Cover markup
+	&.has-background-dim:not([class*="-background-color"]):not(.is-light),
+	&:not(.is-light) .has-background-dim:not([class*="-background-color"]) {
+		& ~ .wp-block-cover__inner-container [data-rich-text-placeholder]::after {
+			color: $white;
+		}
+	}
+
 	.has-background-dim.has-background-gradient {
 		background-color: transparent;
 	}
