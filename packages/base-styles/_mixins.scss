@@ -278,6 +278,10 @@
 		@include input-style__focus();
 	}
 
+	@include input-placeholder-color;
+}
+
+@mixin input-placeholder-color {
 	// Use opacity to work in various editor styles.
 	&::-webkit-input-placeholder {
 		color: $dark-gray-placeholder;
