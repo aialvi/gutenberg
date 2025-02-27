@@ -42,6 +42,7 @@ import {
 	LINK_DESTINATION_MEDIA,
 	LINK_DESTINATION_NONE,
 	ALLOWED_MEDIA_TYPES,
+	SIZED_LAYOUTS,
 } from './constants';
 
 export const pickRelevantMediaFiles = ( image, size ) => {
@@ -113,14 +114,6 @@ export function ImageEdit( {
 	const [ temporaryURL, setTemporaryURL ] = useState( attributes.blob );
 
 	const containerRef = useRef();
-	// Only observe the max width from the parent container when the parent layout is not flex nor grid.
-	// This won't work for them because the container width changes with the image.
-	// TODO: Find a way to observe the container width for flex and grid layouts.
-	const isMaxWidthContainerWidth =
-		! parentLayout ||
-		( parentLayout.type !== 'flex' && parentLayout.type !== 'grid' );
-	const [ maxWidthObserver, maxContentWidth ] = useMaxWidthObserver();
-
 	const [ placeholderResizeListener, { width: placeholderWidth } ] =
 		useResizeObserver();
 
@@ -363,6 +356,14 @@ export function ImageEdit( {
 		ref: containerRef,
 		className: classes,
 	} );
+	// Only observe the max width from the parent container when the parent layout is not flex nor grid.
+	// This won't work for them because the container width changes with the image.
+	// TODO: Find a way to observe the container width for flex and grid layouts.
+	const isMaxWidthContainerWidth =
+		! parentLayout || ! SIZED_LAYOUTS.includes( parentLayout.type );
+	const [ maxWidthObserver, maxContentWidth ] = useMaxWidthObserver(
+		blockProps.className
+	);
 
 	// Much of this description is duplicated from MediaPlaceholder.
 	const { lockUrlControls = false, lockUrlControlsMessage } = useSelect(

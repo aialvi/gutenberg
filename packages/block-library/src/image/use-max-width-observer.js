@@ -1,17 +1,20 @@
 /**
  * WordPress dependencies
  */
-import { useRef } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 import { useResizeObserver } from '@wordpress/compose';
 
-function useMaxWidthObserver() {
-	const [ contentResizeListener, { width } ] = useResizeObserver();
-	const observerRef = useRef();
+function useMaxWidthObserver( className ) {
+	const [ usedMaxWidth, setUsedMaxWidth ] = useState();
+	const setResizeObserved = useResizeObserver( ( [ entry ] ) => {
+		setUsedMaxWidth( entry.contentRect.width );
+	} );
 
 	const maxWidthObserver = (
 		<div
-			// Some themes set max-width on blocks.
-			className="wp-block"
+			// The block’s class names need to be applied because the max-width
+			// may vary per theme styles (e.g. alignments).
+			className={ className }
 			aria-hidden="true"
 			style={ {
 				position: 'absolute',
@@ -20,13 +23,11 @@ function useMaxWidthObserver() {
 				height: 0,
 				margin: 0,
 			} }
-			ref={ observerRef }
-		>
-			{ contentResizeListener }
-		</div>
+			ref={ setResizeObserved }
+		/>
 	);
 
-	return [ maxWidthObserver, width ];
+	return [ maxWidthObserver, usedMaxWidth ];
 }
 
 export { useMaxWidthObserver };
