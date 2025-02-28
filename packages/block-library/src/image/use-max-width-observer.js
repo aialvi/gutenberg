@@ -4,17 +4,24 @@
 import { useState } from '@wordpress/element';
 import { useResizeObserver } from '@wordpress/compose';
 
-function useMaxWidthObserver( className ) {
+function useMaxWidthObserver( { className, isActive } ) {
 	const [ usedMaxWidth, setUsedMaxWidth ] = useState();
 	const setResizeObserved = useResizeObserver( ( [ entry ] ) => {
 		setUsedMaxWidth( entry.contentRect.width );
 	} );
+	if ( ! isActive ) {
+		return [];
+	}
+	// The block’s alignment class names need to be applied because the max-width
+	// may vary by that. The base `wp-block` is needed for classic themes.
+	const usedClassName = className
+		.split( ' ' )
+		.filter( ( name ) => /^(wp-block|align[^\b]+)$/.test( name ) )
+		.join( ' ' );
 
 	const maxWidthObserver = (
 		<div
-			// The block’s class names need to be applied because the max-width
-			// may vary per theme styles (e.g. alignments).
-			className={ className }
+			className={ usedClassName }
 			aria-hidden="true"
 			style={ {
 				position: 'absolute',
